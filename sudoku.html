@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sudoku Solver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    td {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #333;
+      text-align: center;
+      padding: 0;
+    }
+    td:nth-child(3), td:nth-child(6),
+    tr:nth-child(3) td, tr:nth-child(6) td {
+      border-right: 2px solid black;
+      border-bottom: 2px solid black;
+    }
+    input {
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+      text-align: center;
+      border: none;
+    }
+    .invalid {
+      background-color: #fbb;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #message {
+      margin-top: 15px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Sudoku Solver</h2>
+  <p>Enter the known numbers, then click "Solve"</p>
+
+  <table id="sudokuGrid"></table>
+
+  <div>
+    <button onclick="solveSudoku()">Solve</button>
+    <button onclick="resetGrid()">Reset</button>
+  </div>
+
+  <div id="message"></div>
+  <p><b>
+    If there is more than one solution, up to 10 solutions will be shown,<br>
+     and you can navigate between them using the Previous and Next links. <br>
+     The Unsolve button removes the answers so the input can be changed. <br>
+     The Reset button sets the board to its initial state. Sudokuspoiler will not <br>
+      remember your changes to the board, so solve it in once</b>
+  </p>
+
+  <script>
+    const grid = [];
+
+    function createGrid() {
+      const table = document.getElementById("sudokuGrid");
+      for (let i = 0; i < 9; i++) {
+        const row = [];
+        const tr = document.createElement("tr");
+        for (let j = 0; j < 9; j++) {
+          const td = document.createElement("td");
+          const input = document.createElement("input");
+          input.setAttribute("type", "number");
+          input.setAttribute("min", 1);
+          input.setAttribute("max", 9);
+          input.addEventListener('input', () => validateCell(i, j));
+          td.appendChild(input);
+          tr.appendChild(td);
+          row.push(input);
+        }
+        table.appendChild(tr);
+        grid.push(row);
+      }
+    }
+
+    function getGridValues() {
+      return grid.map(row =>
+        row.map(cell => {
+          const value = parseInt(cell.value);
+          return isNaN(value) ? 0 : value;
+        })
+      );
+    }
+
+    function setGridValues(values) {
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          grid[i][j].value = values[i][j] === 0 ? '' : values[i][j];
+        }
+      }
+    }
+
+    function isValid(grid, row, col, num) {
+      for (let x = 0; x < 9; x++) {
+        if ((grid[row][x] === num && x !== col) || (grid[x][col] === num && x !== row)) return false;
+      }
+      const startRow = Math.floor(row / 3) * 3;
+      const startCol = Math.floor(col / 3) * 3;
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          const r = startRow + i, c = startCol + j;
+          if (grid[r][c] === num && (r !== row || c !== col)) return false;
+        }
+      }
+      return true;
+    }
+
+    function validateCell(row, col) {
+      const values = getGridValues();
+      const value = values[row][col];
+      const cell = grid[row][col];
+      const message = document.getElementById("message");
+
+      if (value === 0) {
+        cell.classList.remove("invalid");
+        message.textContent = '';
+        return;
+      }
+
+      if (!isValid(values, row, col, value)) {
+        cell.classList.add("invalid");
+        message.textContent = `Invalid number ${value} at row ${row + 1}, column ${col + 1}`;
+      } else {
+        cell.classList.remove("invalid");
+        message.textContent = '';
+      }
+    }
+
+    function solve(gridData) {
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          if (gridData[row][col] === 0) {
+            for (let num = 1; num <= 9; num++) {
+              if (isValid(gridData, row, col, num)) {
+                gridData[row][col] = num;
+                if (solve(gridData)) return true;
+                gridData[row][col] = 0;
+              }
+            }
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function solveSudoku() {
+      const values = getGridValues();
+      const hasError = grid.flat().some(cell => cell.classList.contains("invalid"));
+
+      if (hasError) {
+        document.getElementById("message").textContent = "Fix invalid entries before solving.";
+        return;
+      }
+
+      const solved = solve(values);
+      if (solved) {
+        setGridValues(values);
+        document.getElementById("message").textContent = "Solved successfully!";
+      } else {
+        document.getElementById("message").textContent = "No solution found.";
+      }
+    }
+
+    function resetGrid() {
+      for (let row of grid) {
+        for (let cell of row) {
+          cell.value = '';
+          cell.classList.remove("invalid");
+        }
+      }
+      document.getElementById("message").textContent = '';
+    }
+
+    createGrid();
+  </script>
+
+</body>
+</html>

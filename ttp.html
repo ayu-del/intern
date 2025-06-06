@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title style="font-size:50px; text-align:center; color:black">Temperature Conversion - Celsius to Fahrenheit
+</title>
+</head>
+<body><div style="background-color:rgb(41, 36, 36)">
+  <h1 style="font-size:50px; text-align:center; color:white"><b><i>Temperature Conversion - Celsius to Fahrenheit
+</i></b></h2>
+<p style="text-align:center;color:white;font-size:15px;line-height:30px"><b><i>Convert Celsius to Fahrenheit and celsius to kelvin using  temperature calculator<br>
+Our conversion chart also shows the formula so you can make temperature conversions manually.
+
+</i></b></p>
+<div style="text-align:center"><a style="font-size:20px;background-color:red; padding:3px 10px 3px 10px;color:white;" href="https://www.google.com/">Learn more</a></div>
+</div>
+<div style="background-color:rgb(141, 185, 207)">
+
+   <div style="text-align:center"><div style="font-size:30px"><label for="celsius"><b><i>Enter temperature in Celsius:</i></b></label>
+  <input type="number" id="celsius" placeholder="Celsius">
+  <br><br></div>
+
+ <div style="font-size:30px"> <label><b><i>CHOOSE CONVERSION</i></b></label><br>
+  <input type="radio" id="toFahrenheit" name="conversion" value="fahrenheit">
+  <label for="toFahrenheit"><b><i>Celsius to Fahrenheit</i></b></label><br>
+  <input type="radio" id="toKelvin" name="conversion" value="kelvin">
+  <label for="toKelvin"><b><i>Celsius to Kelvin</i></b></label><br><br> </div>
+
+ <button onclick="convertTemperature()"><b><i>Convert</i></b></button>
+
+  <div style="color:red;font-size:30px"><h3 id="result"><b><i>RESULT</i></b></h3></div> </div>
+
+  <script>
+    function convertTemperature() {
+      const celsius = parseFloat(document.getElementById("celsius").value);
+      const toFahrenheit = document.getElementById("toFahrenheit").checked;
+      const toKelvin = document.getElementById("toKelvin").checked;
+      const result = document.getElementById("result");
+
+      if (isNaN(celsius)) {
+        result.textContent = "Please enter a valid number for Celsius.";
+        return;
+      }
+
+      if (toFahrenheit) {
+        const fahrenheit = (celsius * 9/5) + 32;
+        result.textContent = `${celsius}°C is equal to ${fahrenheit.toFixed(2)}°F.`;
+      } else if (toKelvin) {
+        const kelvin = celsius + 273.15;
+        result.textContent = `${celsius}°C is equal to ${kelvin.toFixed(2)}K.`;
+      } else {
+        result.textContent = "Please select a conversion option.";
+      }
+    }
+  </script>
+<div style="text-align:center"><img style="width:33%" src="pic.jpg"></div>
+</body></div>
+</html>

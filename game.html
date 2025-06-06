@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Number Guessing Game</h1>
+
+    <div>
+        <input type="number" id="min" placeholder="Min value">
+        <input type="number" id="max" placeholder="Max value">
+        <button onclick="startGame()">Start Game</button>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <input type="number" id="guess" placeholder="Enter your guess" disabled>
+        <button onclick="checkGuess()" disabled id="guessBtn">Guess</button>
+    </div>
+
+    <div id="message"></div>
+
+    <script>
+        let targetNumber, attempts = 0;
+
+        function startGame() {
+            const min = parseInt(document.getElementById("min").value);
+            const max = parseInt(document.getElementById("max").value);
+            const message = document.getElementById("message");
+
+            if (isNaN(min) || isNaN(max) || min >= max) {
+                message.textContent = "Please enter valid minimum and maximum numbers.";
+                return;
+            }
+
+            targetNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+            attempts = 0;
+            message.textContent = "Game started! Enter your guess.";
+            document.getElementById("guess").disabled = false;
+            document.getElementById("guessBtn").disabled = false;
+        }
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById("guess").value);
+            const message = document.getElementById("message");
+
+            if (isNaN(guess)) {
+                message.textContent = "Please enter a valid number.";
+                return;
+            }
+
+            attempts++;
+
+            if (guess < targetNumber) {
+                message.textContent = "Too low! Try a higher number.";
+            } else if (guess > targetNumber) {
+                message.textContent = "Too high! Try a lower number.";
+            } else {
+                message.textContent = `Congratulations! You guessed it in ${attempts} attempt(s).`;
+                document.getElementById("guess").disabled = true;
+                document.getElementById("guessBtn").disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
